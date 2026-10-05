@@ -1,0 +1,2184 @@
+FORMAT: 1A
+HOST: https://dashboard.timing.tech/timingapi.svc
+
+# Timing
+
+
+
+
+
+
+## Scheduling Request [/scheduling/account/{account}]
+
++ Parameters
+    + account (String, Required) - Token
+
+### Request [POST]
+<b>Request for the most efficient scheduling and dispatching options based on traffic conditions,
+skills type and level, constraints, analytics and AI. The request is asynchronous. To get the results use 'Scheduling Get' API method. Timing can also 'Push' the result by given URI.</b>
+
+
+
+
+* callId (String, Required): Call Identifier
+* address (String, Required if geolocation omitted): Appointment address
+* city (String, Required): Appointment city
+* geolocation (String, Required if address omitted): Appointment geolocation 
+* hasNewAddress (Bool, Required): Set to true in case the customer already exist and his address was changed. Default = false.
+* territoryId (String): Territory identifier. Send NULL if workforce has no territories.
+* taskIds (String, Required): Task IDs separated by comma
+* skills (Array of objects) - Array of skills (id & level) which required to handle the job. The less expensive resource will be preffered
+* parts (Array) - The parts that required to complete the tasks on the customer site.
+* priorityLevel (Number) - Determine the priority level of the appointment (1/10/100/1000). 1000 = highest priority. High priority customers will push lower priority customers on the timeline. Also, high priority customers will not be delayed by lower priorities
+* estimatedAccessTime (Number): Estimated access time in minutes from arrival to address until coming to the site
+* planningHorizon (Number, Required): Planning horizon in business days. <br> '0'=on demand (same business day)
+* timeWindows (String Array): Time window array of prefered windows to schedule the appointment. Required format - yyyyMMddHHmm 
+* overrideServiceTime (Number): By this field it is possible to override the estimated service time and provide a new estimation for this specific job
+* dependenceCalls (String Array): An array of calls which should be attended before current scheduling request. 
+* techId (String): Technician identifier. In case exists indicates of preferred technician
+* timezone (Number, Required): GMT value in minutes
+
+
+
++ Request (application/json)
+
+        {
+           
+            "callId": "123123",
+            "address": "Manhattan Avenue, New York, NY, USA",
+            "city": "New York",
+            "geolocation": "40.808860,-73.954030",
+            "hasNewAddress": false,
+            "territoryId": null,
+            "taskIds": "674,369,975",
+            "skills": [{"Id":1, "level":1},{"Id":1, "level":2}],
+            "parts": ["243738", "5657494", "6856353"],
+            "priorityLevel": 1,
+            "estimatedAccessTime" : 10,
+            "planningHorizon": "7",
+            "timeWindows": [{"startTimeWindow":"201903011000","endTimeWindow":"201903011200"},{"startTimeWindow":"201903021000","endTimeWindow":"201903021200"}],
+            "overrideServiceTime": null,
+            "timeWindowflexibility":1, 
+            "dependenceCalls": ["2423453","34534645"],
+            "techId": "123214",
+            "timezone": "-240",
+           
+        }
+        
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result" : "Processing..."
+            }  
+            
+## Scheduling Get    [/scheduling/call/{id}/account/{account}]
+
+### Get [GET]
+
+<b>Get the most efficient dispatch options. </b>
+
++ Response 200 (application/json)
+
+    + Body
+    
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result":
+                    {["Id":"1085768", "startTimeWindow":"201901011200","endTimeWindow":"201901011300","techId":3645, "orderOnRoute":4, "shiftId":3648, "status":1000, "statusDescription":"OK", "fine": 10.0, "fineMarginalCost":2, "fineLateness":2, "fineOutOfZone":0, "fineOverQualified":8,"fineOvertime":0 ],
+                     ["Id":"1085769", "startTimeWindow":"201902011200","endTimeWindow":"201901021300","techId":5478, "orderOnRoute":2, "shiftId":2347, "status":1000, "statusDescription":"OK", "fine": 11.0, "fineMarginalCost":1, "fineLateness":2, "fineOutOfZone":0, "fineOverQualified":8,"fineOvertime":1 ],
+                     ["Id":"1085770","startTimeWindow":"201901010800","endTimeWindow":"201901010900","techId":3453, "orderOnRoute":1, "shiftId":6543, "status":1000, "statusDescription":"OK", "fine": 13.0, "fineMarginalCost":13, "fineLateness":2, "fineOutOfZone":0, "fineOverQualified":8,"fineOvertime":3 ],
+                     ["Id":"1085771","startTimeWindow":"201901011600","endTimeWindow":"201901011700","techId":2423, "orderOnRoute":4, "shiftId":4354, "status":1000, "statusDescription":"OK", "fine": 15.0, "fineMarginalCost":0, "fineLateness":2, "fineOutOfZone":0, "fineOverQualified":8,"fineOvertime":5  ],
+                     ["Id":"1085772","startTimeWindow":"201903011200","endTimeWindow":"201903011300","techId":5675, "orderOnRoute":6, "shiftId":5656, "status":1000, "statusDescription":"OK", "fine": 19.0, "fineMarginalCost":23, "fineLateness":2, "fineOutOfZone":0, "fineOverQualified":8,"fineOvertime":9 ],
+                     ["Id":"1085773","startTimeWindow":"201904011200","endTimeWindow":"201904011300","techId":3434, "orderOnRoute":3, "shiftId":2344, "status":1000, "statusDescription":"OK", "fine": 21.0, "fineMarginalCost":25, "fineLateness":2, "fineOutOfZone":0, "fineOverQualified":8,"fineOvertime":11  ],
+                     ["Id":"1085774","startTimeWindow":"201905011200","endTimeWindow":"201905011300","techId":1213, "orderOnRoute":2, "shiftId":7865, "status":1000, "statusDescription":"OK", "fine": 27.0, "fineMarginalCost":21, "fineLateness":2, "fineOutOfZone":0, "fineOverQualified":8,"fineOvertime":17 ],
+                     ["Id":"1085775","startTimeWindow":"201906011200","endTimeWindow":"201906011300","techId":6766, "orderOnRoute":2, "shiftId":4343, "status":1000, "statusDescription":"OK", "fine": 32.0, "fineMarginalCost":17, "fineLateness":2, "fineOutOfZone":0, "fineOverQualified":8,"fineOvertime":22 ],
+                     ["Id":"1085776","startTimeWindow":"201906011600","endTimeWindow":"201906011700","techId":6766, "orderOnRoute":5, "shiftId":4783, "status":1000, "statusDescription":"OK", "fine": 37.0, "fineMarginalCost":19, "fineLateness":2, "fineOutOfZone":0, "fineOverQualified":8,"fineOvertime"27  ],
+                     ["Id":"1085777","startTimeWindow":"201907011200","endTimeWindow":"201901071300","techId":6766, "orderOnRoute":6, "shiftId":4753, "status":1000, "statusDescription":"OK", "fine": 58.0, "fineMarginalCost":0, "fineLateness":2, "fineOutOfZone":0, "fineOverQualified":8,"fineOvertime":48 ]
+                    }  
+
+## Scheduling Create [/scheduling/dispatchOption/{id}/account/{account}]
+
++ Parameters
+    + id (String, Required) - Dispatch option indentifier
+    + account (String, Required) - Token
+    
+### Create [POST]
+
+<b>Create a new appointment based on one of the scheduling options were given. </b>
+
+* callId (String, Required) - 
+* companyName (String) - The name of the cusomer's company
+* customerId (String, Required) - Customer identifier.
+* firstName (String, Required) - First name
+* lastName (String) - Last name (surename)
+* mobile (String, Required) - Mobile/phones numbers separated by comma. First for text messages and other to display.
+* addressDetails (String) - Address details
+* customerTypeId (Int) - Customer type Id. Default is 0. (VIP, Buisness, Private etc.)
+* customerJobDescription (String) - Customer description 
+* dispatcherJobDescription(String) - Dispatcher description
+* techJobDescription(String) - Technician description
+* jobStatus(String) - Description of the job status
+* openerName (String) - Name of representative who opened the call.
+* serviceTypeId (Int) - Service type identifier (maintanance, installation, etc.) Default value is 0
+* product (Object) - customer's product 
+* id (String) - product identifier
+* model (String) - product model
+* productNumber (String) - product number
+* serialNumber (String, Reqiured) - product serial number
+* purchaseDate (String) - prduct purchase date yyyyMMdd
+* warrantyExpiry (String) - product warranty expiration
+* insuranceExpiry (String) - product insuarnce expiration
+* installerName (String) - The person full name who install the product
+* installerMobile (String) - The person mobile who install the product
+* overrideCustomerData (bool) - Set to true in case customer data was changed. Default = false.
+* driveUrl (String): Link to related files
+
+
++ Request (application/json) 
+
+        {
+           
+            "callId": "123123",
+            "companyName": "HP"
+            "customerId":"67554735",
+            "firstName": "Bill",
+            "lastName": "Evans",
+            "mobile": "+12025550142, +12025555179",
+            "addressDetails": "floor 5 apartment 23",
+            "customerTypeId" : 1,
+            "customerJobDescription":"Can't turn it on",
+            "dispatcherJobDescription": "Known issue on this product model",
+            "techJobDescription": null,
+            "jobStatus":"Second call",
+            "openerName": "John Brown",
+            "serviceTypeId": 1,
+            "overrideCustomerData" : false,
+            "driveUrl": "https://drive.example.com/file/abc",
+            "product":
+            {
+                "id":"34567",
+                "model":"abcde",
+                "productNumber":"5865739003",
+                "serialNumber":"A445bdfsf35",
+                "purchaseDate":"20201223",
+                "warrantyExpiry":"20210313",
+                "insuranceExpiry":"20210710",
+                "installerName":"John Smith",
+                "installerMobile": "+12025553466"
+            }
+            
+           
+        }
+        
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result":
+                 {
+                    "callId": "123123",
+                    "companyName": "HP"
+                    "customerId":"67554735",
+                    "firstName": "Bill",
+                    "lastName": "Evans",
+                    "mobile": "+12025550142, +12025555179",
+                    "customerTypeId" : 1,
+                    "customerJobDescription":"Can't turn it on",
+                    "dispatcherJobDescription": "Known issue on this product model",
+                    "techJobDescription": null,
+                    "jobStatus":"Second call",
+                    "openerName": "John Brown",
+                    "serviceTypeId": 1
+                }
+            } 
+            
+
+
+
+## Scheduling Force [/schedulingForce/account/{account}]
+
++ Parameters
+    + account (String, Required) - Token
+    
+### Create [POST]
+
+<b>Create a new appointment by scheduling enforcment </b>
+
+* callId (String, Required) - Call identifier
+* companyName (String) - The name of the cusomer's company
+* customerId (String, Required) - Customer identifier
+* firstName (String, Required) - First name
+* lastName (String, Required) - Last name (surename)
+* mobile (String, Required) - Phones list separated by comma. The first is the primary
+* address (String, Required if geolocation is empty) - Customer's address
+* city (String, Required if geolocation is empty) - Customer's city
+* geolocation (String , Required if address & city are empty) - Customer's geolocation
+* customerTypeId (Number, Required) - Customer's type
+* territoryId (String, Required) - Customer's territory ID
+* taskIds (String, Required) - Tasks list separated by comma
+* skills (Object array, Required) - Skills object array
+* estimatedAccessTime (Number) - Estimated access time from enter to the Customer's building and untill starting handling the tasks in minutes. Default = 0
+* overrideServiceTime (Number): By this field it is possible to override the estimated service time and provide a new estimation
+* priorityLevel (Number) - defined the appointment priority, 1/10/100/1000 when 1 = regular priorty and 1000 = highest priority
+* techId (String, Required) - Technician identifier
+* customerJobDescription (String) - Customer's description
+* dispatcherJobDescription (String) - Dispatcher's description
+* techJobDescription (String) - Technician's description
+* jobStatus (String) - Job status description
+* openerName (String) - The representative who set the appointment
+* serviceTypeId (Number, Required) - Service type
+* startTimeWindow (String, Required) - Start time window in yyyyMMddHHmm format
+* endTimeWindow (String, Required) -  End time window in yyyyMMddHHmm format
+* positionOnRoute (Number, Required) - Indicated the dervice call order in the route (i.e to the third appointment on the route -> =3)
+* validatePosition (Boolean) - If true (recommanded), the system will validate the position. Default = false
+* timezone (Number, Required) - The timezone account in minutes
+* product (Object) - customer's product 
+* id (String) - product identifier
+* model (String) - product model
+* productNumber (String) - product number
+* serialNumber (String, Reqiured) - product serial number
+* purchaseDate (String) - prduct purchase date yyyyMMdd
+* warrantyExpiry (String) - product warranty expiration
+* insuranceExpiry (String) - product insuarnce expiration
+* installerName (String) - The person full name who install the product
+* installerMobile (String) - The person mobile who install the product
+* customerOverrideType(Number, Required) - 0 = None; 1 = Details; 2 = Address; 3 = Both. Default is 0
+* driveUrl (String): Link to related files
+
+
++ Request (application/json) 
+
+        {
+           
+            "callId": "123123",
+            "companyName": "HP",
+            "customerId":"67554735",
+            "firstName": "Bill",
+            "lastName": "Evans",
+            "mobile": "+12025550142, +12025555179",
+            "address": "Manhattan Avenue, New York, NY, USA", 
+            "city": "New York",
+            "geolocation": null,
+            "customerTypeId" : 1,
+            "territoryId": 114,
+            "taskIds": 50,51,
+            "skills": "[{Id:1, level:1}, {Id:2, level:1}]",
+            "estimatedAccessTime": 10,
+            "overrideServiceTime": null,
+            "timeWindowflexibillity": 10,
+            "techId": "1745",
+            "customerJobDescription":"Can't turn it on",
+            "dispatcherJobDescription": "Known issue on this product model",
+            "techJobDescription": null,
+            "jobStatus":"Second call",
+            "openerName": "John Brown",
+            "serviceTypeId": 1,
+            "startTimeWindow": "201907020800",
+            "endTimeWindow": "201907021000",
+            "positionOnRoute": 3,
+            "validatePosition": true,
+            "timezone": -240,
+            "customerOverrideType" : 2,
+            "driveUrl": "https://drive.example.com/file/abc",
+            "product":
+            {
+                "id":"34567",
+                "model":"abcde",
+                "productNumber":"5865739003",
+                "serialNumber":"A445bdfsf35",
+                "purchaseDate":"20201223",
+                "warrantyExpiry":"20210313",
+                "insuranceExpiry":"20210710",
+                "installerName":"John Smith",
+                "installerMobile": "+12025553466"
+            }
+        }
+        
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result":
+                 {
+                    "jobId": "47696",
+                    "callId": "123123",
+                    "companyName": "HP"
+                    "customerId":"67554735",
+                    "firstName": "Bill",
+                    "lastName": "Evans",
+                    "mobile": "+12025550142, +12025555179",
+                    "address": "Manhattan Avenue, New York, NY, USA", 
+                    "city": "New York",
+                    "geolocation": null,
+                    "customerTypeId" : 1,
+                    "territoryId": 114,
+                    "taskIds": 50,51,
+                    "skills": "[{Id:1, level:1}, {Id:2, level:1}]",
+                    "estimatedAccessTime": 10,
+                    "timeWindowflexibillity": 10,
+                    "techId": "1745",
+                    "customerJobDescription":"Can't turn it on",
+                    "dispatcherJobDescription": "Known issue on this product model",
+                    "techJobDescription": null,
+                    "jobStatus":"Second call",
+                    "openerName": "John Brown",
+                    "serviceTypeId": 1,
+                    "startTimeWindow": "201907020800",
+                    "endTimeWindow": "201907021000",
+                    "positionOnRoute": 3,
+                    "validatePosition": true,
+                    "timezone": -240
+                }
+            } 
+
+
+## Customer Create, List [/customer/account/{account}]
+
+### Create [POST]
+<b>Create a new customer with all contact details</b>
+
+* id (Number, Required) - Customer identifier
+* firstName (String, Required) - Customer first name 
+* lastName (String, Required) - Customer last name
+* address (String) - Customer address 
+* city (String) - Customer city
+* geolocation (String) - Customer location [latitude,longitude]
+* addressDetails (String) - Customer address details. 
+* mobile (String, Required) - Customer phone numbers separated by a comma. The first will be the primary phone
+* typeId (Number) - Customer type Id  
+* territoryId (String, Required) - Customer area id  
+* directions (String) - Directions to customer address
+* companyName (String) - Name of the customer's company
+
+
++ Request (application/json)
+
+        {
+           
+            "id": "123123",
+            "firstName": "John",
+            "lastName": "Park",
+            "address": "123 Test Street, New York",
+            "city": "New York",
+            "geoLocation": null,
+            "addressDetails": "apartment 24",
+            "mobile": "12025550142, 12025555179",
+            "typeId": 0,
+            "territoryId": 400,
+            "directions": null,
+            "companyName": "HP"
+        }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                   "id": "123123",
+                   "firstName": "John",
+                   "lastName": "Park",
+                   "address": "123 Test Street, New York",
+                   "city": "New York",
+                   "geoLocation": null,
+                   "addressDetails": " 123 Test Street",
+                   "mobile": "12025550142, 12025555179",
+                   "typeId": 0,
+                   "territoryId": 400,
+                   "directions": null,
+                   "companyName": "HP"
+                }
+            }            
+         
+### List [GET]
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": [{
+                    "id": "123123",
+                    "firstName": "John",
+                    "lastName": "Park",
+                    "address": "123 Test Street, New York",
+                    "city": "New York",
+                    "geoLocation": null,
+                    "addressDetails": " 123 Test Street",
+                    "mobile": "12025550142, 12025555179",
+                    "typeId": 0,
+                    "territoryId": 400,
+                    "directions": null,
+                    "companyName": "HP"
+                }]
+            }            
+            
+## Customer Edit, Get, Delete [/customer/{id}/account/{account}]
+
+### Edit [PUT]
+
++ Parameters
+    + id (String, Required) - Customer Id
+    + account (String, Required) - Token
+   
+
++ Request (application/json)
+
+        {
+            "id": "123123",
+            "firstName": "John",
+            "lastName": "Park",
+            "address": "123 Test Street, New York",
+            "city": "New York",
+            "geoLocation": null,
+            "addressDetails": " 123 Test Street",
+            "mobile": "12025550142, 12025555179",
+            "typeId": 0,
+            "territoryId": 400,
+            "directions": null,
+            "companyName": "HP"
+        }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                     "id": "123123",
+                     "firstName": "John",
+                     "lastName": "Park",
+                     "address": "123 Test Street, New York",
+                     "city": "New York",
+                     "geoLocation": null,
+                     "addressDetails": " 123 Test Street",
+                     "mobile": "12025550142, 12025555179",
+                     "typeId": 0,
+                     "territoryId": 400,
+                     "directions": null,
+                     "companyName": "HP"
+                }
+            }            
+       
+
+### Get [GET]
+
++ Parameters
+    + id (String, Required) - Customer Id
+    + account (String, Required) - Token
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "id": "123123",
+                     "firstName": "John",
+                     "lastName": "Park",
+                     "address": "123 Test Street, New York",
+                     "city": "New York",
+                     "geoLocation": null,
+                     "addressDetails": "123 Test Street",
+                     "mobile": "12025550142, 12025555179",
+                     "typeId": 0,
+                     "territoryId": 400,
+                     "directions": null,
+                     "companyName": "HP"
+                }
+            }            
+
+
+### Delete [DELETE]
+Schedulin
++ Parameters
+    + id (String, Required) - Customer Id
+    + account (String, Required) - Token
+    
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {"id": "123123"}
+                    
+            }  
+            
+## Customer History Upsert [/history/customers/{customerId}/account/{account}]
+
+### Upsert [POST]
+
+* customerId (String) - customer Id
+* techId (Number) - technician identifier
+* notes (String) - technician summery notes
+* visitDate (String)- yyyyMMdd date format
+* done (bool, nullable) - does the technician completed his tasks
+* callId (String) - call idenitifier
+* account (String) - account token
+
+
++ Request (application/json)
+
+        [{
+            "customerId": "426546457",
+            "techId": "1239",
+            "notes": "filter cleaning",
+            "visitDate": "20220401",
+            "done": true,
+            "callId": "5543f-324fd-hfy5re45"
+        }]
+
++ Response  200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": null
+            }
+            
+## Customer Pool Create, List [/customerpool/{account}]
+
++ customerId(String, Optional) - Customer Identifier. Use it fo Get a spesific pool customer
++ account (String, Required) - Account token
+
+### Create [POST]
+<b>Create and add a new customer to the customers' pool
+
+* id (String, Required) - Customer identifier
+* firstName (String, Required)
+* lastName (String, Required)
+* mobile (String, Required)
+* address (String, Required)
+* city (String, Required)
+* geocoding (String)
+* areaId (Number)
+
++ Request (application/json)
+
+        {
+            "id":"111",
+            "firstName":"Bruce",
+            "lastName":"Wilis",
+            "mobile":"0504496039",
+            "address":"קרל נטר 34 ראשון לציון",
+            "city":"ראשון לציון",
+            "geocoding":null,
+            "areaId":1
+        }
+        
++ Response 200 (application/json)
+
+        {
+            "code": 1000,
+            "description": null,
+            "message": "Ok",
+            "result": "{\"Id\":\"111\",\"FirstName\":\"Bruce\",\"Wilis\":\"bbb\",\"Mobile\":\"0504496039\",\"Address\":\"קרל נטר 34 ראשון לציון\",\"City\":\"ראשון לציון\",\"Geocoding\":\"31.9736599,34.802099\",\"AreaId\":1}"
+        }
+        
+
+### List [GET]
+
++ Response 200 (application/json)
+
+        {
+            "code": 1000,
+            "description": null,
+            "message": "Ok",
+            "result": "{\"Id\":\"111\",\"FirstName\":\"Bruce\",\"Wilis\":\"bbb\",\"Mobile\":\"0504496039\",\"Address\":\"קרל נטר 34 ראשון לציון\",\"City\":\"ראשון לציון\",\"Geocoding\":\"31.9736599,34.802099\",\"AreaId\":1}"
+        }
+        
+## Customer Pool Get [/customerpool/{account}/{customerId}]
++ parameters
+    + customerId (String, Required) - Customer identifier, optional, to get a specific customer from the pool
+    + account (String, Required) - account token
+    
+### Get [GET]
+
++ Response 200 (application/json)
+
+ 
+        {
+            "code": 1000,
+            "description": null,
+            "message": "Ok",
+            "result": "{\"Id\":\"111\",\"FirstName\":\"Bruce\",\"Wilis\":\"bbb\",\"Mobile\":\"0504496039\",\"Address\":\"קרל נטר 34 ראשון לציון\",\"City\":\"ראשון לציון\",\"Geocoding\":\"31.9736599,34.802099\",\"AreaId\":1}"
+        }
+        
+        
+## Customer Pool Edit, Delete [/customerpool/{customerId}/{account}]
+
++ customerId (String, Required) - Customer identifier
++ account (String, Required) - account token
+    
+### Edit [PUT]
+<b>Edit pool customer details
+
++ Request (application/json)
+
+        {
+            "id":"111",
+            "firstName":"Bruce",
+            "lastName":"Wilis",
+            "mobile":"0504496039",
+            "address":"קרל נטר 34 ראשון לציון",
+            "city":"ראשון לציון",
+            "geocoding":null,
+            "areaId":1
+        }
+        
++ Response 200 (application/json)
+
+  
+        {
+            "code": 1000,
+            "description": null,
+            "message": "Ok",
+            "result": "{\"Id\":\"111\",\"FirstName\":\"Bruce\",\"Wilis\":\"bbb\",\"Mobile\":\"0504496039\",\"Address\":\"קרל נטר 34 ראשון לציון\",\"City\":\"ראשון לציון\",\"Geocoding\":\"31.9736599,34.802099\",\"AreaId\":1}"
+        }
+        
+
+### Delete [DELETE]
+<b>Delete a custmer from the pool
+
++ Response 200 (application/json)
+
+   
+    
+        {
+            "code": 1000,
+            "description": null,
+            "message": "Ok",
+            "result": "111"
+        }
+
+
+            
+## Technician Create, List [/technician/account/{account}]
+
+### Create [POST]
+<b>Create a new technician.</b>
+
+* Id (String) - Technician identifier
+* firstName (String) - Technician first name
+* lastName (String) - Technician last name
+* mobile (String) - Technician phone number
+* typeId (String) - Technician type Id
+* depotHour (String) - Default UTC start working hour in HHmm format
+* depotAddress (String) - Default start address
+* depotCity (String) - Default start city
+* depotGeolocation - Default start geolocation
+* lastAddress (String) - Last address
+* lastCity (String) - Last city
+* lastGeolocation - Default last geolocation
+* skills (Array of Objects) - Array of skills (qualifications) the technician has. assembled from type and level
+* territoryId (String) - List of prefered territories separated by comma (i.e 335,676,345)
+* imgName (String) - Technician's image name (will be uploaded by FTP)
+* teamId (String) - techncian's team Id
+
+
++ Request (application/json)
+
+        {
+            "Id": "123",
+            "firstName": "John",
+            "lastName": "Tech",
+            "mobile": "026796636",
+            "typeId": "2",
+            "depotHour": "1230",
+            "depotAddress": "123 Test Street, New York",
+            "depotCity": "New York",
+            "depotGeolocation": null,
+            "lastAddress": "123 Test Street, New York",
+            "lastCity": "New York",
+            "lastGeolocation": null,
+            "skills": [{"Id":"28","level":1},{"Id":"34", "level":2}],
+            "territoryId": "400, 401, 405",
+            "imgName": "johnTech.png",
+            "teamId" : "2"
+          
+        }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                     "Id": "123",
+                    "firstName": "John",
+                    "lastName": "Tech",
+                    "mobile": "026796636",
+                    "typeId": "2",
+                    "depotHour": "1230",
+                    "depotAddress": "123 Test Street, New York",
+                    "depotCity": "New York",
+                    "depotGeolocation": null,
+                    "lastAddress": "123 Test Street, New York",
+                    "lastCity": "New York",
+                    "lastGeolocation": null,
+                    "skills": [{"Id":"28","level":1},{"Id":"34", "level":2}],
+                    "territoryId": "400, 401, 405",
+                    "imgName": "johnTech.png",
+                     "teamId" : "2"
+                }
+            }            
+         
+### List [GET]
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "technicians": [{
+                      "Id": "123",
+                        "firstName": "John",
+                        "lastName": "Tech",
+                        "mobile": "026796636",
+                        "typeId": "2",
+                        "depotHour": "1230",
+                        "depotAddress": "123 Test Street, New York",
+                        "depotCity": "New York",
+                        "depotGeolocation": null,
+                        "lastAddress": "123 Test Street, New York",
+                        "lastCity": "New York",
+                        "lastGeolocation": null,
+                        "skills": [{"Id":"28","level":1},{"Id":"34", "level":2}],
+                        "territoryId": "400, 401, 405",
+                        "imgName":"johnTech.png",
+                        "teamId" : "2"
+                }]
+            }            
+            
+## Technician Edit, Get, Delete [/technician/{id}/account/{account}]
+
+### Edit [PUT]
+
++ Parameters
+    + id (String, Required) - Technician Id
+    + account (String, Required) - Token
+
++ Request (application/json)
+
+        {
+        
+             "Id": "123",
+            "firstName": "John",
+            "lastName": "Tech",
+            "mobile": "026796636",
+            "typeId": "2",
+            "depotHour": "1230",
+            "depotAddress": "123 Test Street, New York",
+            "depotCity": "New York",
+            "depotGeolocation": null,
+            "lastAddress": "123 Test Street, New York",
+            "lastCity": "New York",
+            "lastGeolocation": null,
+            "skills": [{"Id":"28","level":1},{"Id":"34", "level":2}],
+            "territoryId": "400, 401, 405",
+            "imgName":"johnTech.png",
+             "teamId" : "2"
+        }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                     "Id": "123",
+                    "firstName": "John",
+                    "lastName": "Tech",
+                    "mobile": "026796636",
+                    "typeId": "2",
+                    "depotHour": "1230",
+                    "depotAddress": "123 Test Street, New York",
+                    "depotCity": "New York",
+                    "depotGeolocation": null,
+                    "lastAddress": "123 Test Street, New York",
+                    "lastCity": "New York",
+                    "lastGeolocation": null,
+                    "skills": [{"Id":"28","level":1},{"Id":"34", "level":2}],
+                    "territoryId": "400, 401, 405",
+                    "imgName":"johnTech.png",
+                     "teamId" : "2"
+                }
+            }            
+       
+
+### Get [GET]
+
++ Parameters
+    + id (String, Required) - Technician Id
+    + account (String, Required) - Token
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                   "Id": "123",
+                    "firstName": "John",
+                    "lastName": "Tech",
+                    "mobile": "026796636",
+                    "typeId": "2",
+                    "depotHour": "1230",
+                    "depotAddress": "123 Test Street, New York",
+                    "depotCity": "New York",
+                    "depotGeolocation": null,
+                    "lastAddress": "123 Test Street, New York",
+                    "lastCity": "New York",
+                    "lastGeolocation": null,
+                    "skills": [{"Id":"28","level":1},{"Id":"34", "level":2}],
+                    "territoryId": "400, 401, 405",
+                    "imgName":"johnTech.png",
+                     "teamId" : "2"
+                }
+            }            
+
+### Delete [DELETE]
+
++ Parameters
+    + id (string, required) - Technician Id
+    + account (String, Required) - Token
+    
++ Response 200 (application/json)
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "Id": "123"
+                }
+            }       
+            
+
+## Shift Create, List [/shift/account/{account}?date={date}&id={id}]
+
+### Create [POST]
+<b> Create a shift for a technician. Define start and end date and time for the shift, depot (departure address) if different than the default (the home address).
+This must be set before a scheduling request</b>
+
+* startTime (String, Required) - Shift starting datetime in yyyyMMddHHmm format
+* endTime (String, Required) - Shift ending datetime in yyyyMMddHHmm format
+* territoryId (String, Required) - List of shift territory Ids separated by comma (default = null)
+* timeZone (Number, Required) - Shift timezone in minutes
+* techId (String, Required) - Techncian Id which will be associated to the shift 
+* capacity (Number) - Vehicle capacity  (Default = null) 
+* depotAddress (String) - Technciain depot 
+* depotCity (String) - Technciain depot 
+* depotGeolocation (String) - Technciain depot  (Required if depotAddress and depotCity are null)
+* minWorkOrder (Number) - Minimum work orders for the shift  (default = 0)
+* timeOff (Object) - define a time period during the shift which the technician will not be dispatched. You can specify an address which will be the route depot when timeOff will end 
+* anchor (Object) - Automatically set an anchor to a shift in the most common geo location where most of the service calls are coming from, based on history and AI clustering. Used only on response object.
+* enabled (Boolean) - Disabled shift to stop dispatch to the shift  
+* canceled (Boolean) - Cancel the shift. If there are service calls, the cluster optimization will automatically rebalance all service calls without using the canceled shift.
++ Request (application/json)
+
+        {
+          
+            "startTime": "201812130800",
+            "endTime": "201812131800",
+            "territoryId": "400, 401, 405",
+            "timezone": "-240",
+            "techId": "57778",
+            "capacity": null,
+            "depotAddress": "83 Gold St New York",
+            "depotCity":"New York",
+            "depotGeolocation":null,
+            "minWorkOrder": 3,
+            "timeOff": {"startHour":"201812131200", "endHour":"201812131600", "fullAddress": "18 Gold St New York", "city":"New York", "geocoding":null },
+            "enabled":true,
+            "canceled":false
+        }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "Id":2998,
+                    "startTime":"201812130800",
+                    "endTime":"201812131800",
+                    "territoryId":"400, 401, 405",
+                    "timezone":"-240",
+                    "techId":"57778",
+                    "capacity":null,
+                    "depotAddress": "83 Gold St New York",
+                    "depotCity":"New York",
+                    "depotGeolocation":null,
+                    "minWorkOrder": 3,
+                    "timeOff": {"startHour":"201812131200", "endHour":"201812131600", "fullAddress": "18 Gold St New York", "city":"New York", "geocoding":null },
+                    "anchor": {"id":"323247835", "startHour":"201812130800", "endHour":"201812130843", "fullAddress": "18 Gold St New York", "city":"New York", "geocoding":null },
+                    "enabled":true,
+                    "canceled:false
+                }
+            }            
+         
+### List [GET]
+
++ Parameters
+    + date (String) - yyyyMMdd
+    + id (String) - Shift Id
+    
+    
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": [{
+                    "Id": "2998",
+                    "startTime":"201812130800",
+                    "endTime":"201812131800",
+                    "territoryId":"400, 401, 405",
+                    "timezone":"-240",
+                    "techId":"57778",
+                    "capacity":null,
+                    "depotAddress": "83 Gold St New York",
+                    "depotCity":"New York",
+                    "depotGeolocation":null,
+                    "minWorkOrder": 3,
+                    "timeOff": {"startHour":"201812131200", "endHour":"201812131600", "fullAddress": "18 Gold St New York", "city":"New York", "geocoding":null },
+                    "anchor": {"id":"323247835", "startHour":"201812130800", "endHour":"201812130843", "fullAddress": "18 Gold St New York", "city":"New York", "geocoding":null },
+                    "enabled":true,
+                    "canceled:false
+                        }]
+            }            
+            
+## Shift Edit, Get, Delete [/shift/{id}/account/{account}]
+
+### Edit [PUT]
+
++ Parameters
+    + id (String, Required) - Shift Id
+    + account (String, Required) - Token
+
++ Request (application/json)
+
+        {
+            "startTime":"201812130800",
+            "endTime":"201812131800",
+            "territoryId":"400, 401, 405",
+            "timezone":"-240",
+            "techId":"57778",
+            "capacity":null,
+            "depotAddress":"83 Gold St New York",
+            "depotCity":"New York",
+            "depotGeolocation":null,
+            "minWorkOrder": 3,
+            "timeOff": {"startHour":"201812131200", "endHour":"201812131600", "fullAddress": "18 Gold St New York", "city":"New York", "geocoding":null },
+            "enabled":true,
+            "canceled":false
+        }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "Id": "2998",
+                    "startTime":"201812130800",
+                    "endTime":"201812131800",
+                    "territoryId":"400, 401, 405",
+                    "timezone":"-240",
+                    "techId":"57778",
+                    "capacity":null,
+                    "depotAddress":"83 Gold St New York",
+                    "depotCity":"New York",
+                    "depotGeolocation":null,
+                    "minWorkOrder": 3,
+                    "timeOff": {"startHour":"201812131200", "endHour":"201812131600", "fullAddress": "18 Gold St New York", "city":"New York", "geocoding":null },
+                    "anchor": {"id":"323247835", "startHour":"201812130800", "endHour":"201812130843", "fullAddress": "18 Gold St New York", "city":"New York", "geocoding":null },
+                    "enabled":true,
+                    "canceled":false
+                }
+            }            
+       
+
+
+### Get [GET]
+
++ Parameters
+    + id (String, Required) - Shift Id
+    + account (String, Required) - Token
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "Id":"2998",
+                    "startTime":"201812130800",
+                    "endTime":"201812131800",
+                    "territoryId":"400, 401, 405",
+                    "timezone":"-240",
+                    "techId":"57778",
+                    "capacity":null,
+                    "depotAddress":"83 Gold St New York",
+                    "depotCity":"New York",
+                    "depotGeolocation":null,
+                    "minWorkOrder": 3,
+                    "timeOff": {"startHour":"201812131200", "endHour":"201812131600", "fullAddress": "18 Gold St New York", "city":"New York", "geocoding":null },
+                    "anchor": {"id":"323247835", "startHour":"201812130800", "endHour":"201812130843", "fullAddress": "18 Gold St New York", "city":"New York", "geocoding":null },
+                    "enabled":true,
+                    "canceled:false
+            }            
+
+### Delete [DELETE]
+
++ Parameters
+    + id (string, required) - Shift Id
+    + account (String, Required) - Token
+    
++ Response 200 (application/json)
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "Id": "2998",
+                    "startTime":"201812130800",
+                    "endTime":"201812131800",
+                    "territoryId":"400, 401, 405",
+                    "timezone":"-240",
+                    "techId":"57778",
+                    "capacity":null,
+                    "depotAddress":"83 Gold St New York",
+                    "depotCity":"New York",
+                    "depotGeolocation":null,
+                    "minWorkOrder": 3,
+                    "timeOff": {"startHour":"201812131200", "endHour":"201812131600", "fullAddress": "18 Gold St New York", "city":"New York", "geocoding":null },
+                    "anchor": {"id":"323247835", "startHour":"201812130800", "endHour":"201812130843", "fullAddress": "18 Gold St New York", "city":"New York", "geocoding":null },
+                    "enabled":true,
+                    "canceled":false
+                }
+            }       
+            
+
+     
+
+## Job Create, List [/job/account/{account}]
+
+### Create [POST]
+<b>Create a job (work order/call) for a technician <u>without</u> using the scheduling algorithms. It is recommanded adding jobs by using scheduling request and create methods  </b>
+
+* jobId (String) - Job Id will be set once job created
+* callId (String, Required) - Call identifier
+* techId (String, Required) - Technician identifier
+* preferred (Boolean, Required) - Is that the only technciain that should handle the job
+* customerId (String, Required) - Customer identifier
+* positionOnRoute (Number, Required) - job position number on the route (order # on the route)
+* done (boolean) - Job has already done or not
+* shiftId (String, Required) - Shift identifier.
+* priority (Number) - Indicates job priority (1 (default) = normal / 10 / 100 / 1000 = highest priority)
+* etaPrediction (String) - Job Estimated time of arrival to the customer [yyyyMMddHHmm]
+* arrivalTime (String) - Actual arrival time to the customer [yyyyMMddHHmm] 
+* departureTime (String) - Actual departure time from the customer [yyyyMMddHHmm]
+* canceled (boolean) - Is the job active or canceled
+* startTimeWindow (String) - start time window [yyyyMMddHHmm]
+* endTimeWindow (String) - end time window [yyyyMMddHHmm],
+* lockTimeWindow (Boolean) - Lock the time window or let the optimization to set the most efficient time window (default = true)
+* taskIds (String, Required) - Tasks Id which assemble the job 
+* serviceTime (Number) - job duration forecast
+* serviceTypeId (Number) - Service type Id
+* teamRequired (boolean) - Is a team reaquired to handle the job
+* productId (String) - Product identifier which related to the job
+* skills (Array Of Objects, Required) -  Skill type and skill level array that required to hanlde the job 
+* openerName (String) - Job opener name
+* descriptions (String) - Descriptions which describe the job 
+* force (Boolean) - Is the job created by the scheduling algorithm or by force (default = false)
+* urgency (String) - Describes the urgency of the job
+* closed (Boolean) - Job is close for technicians report or open
+
+
++ Request (application/json)
+
+        {
+            "callId" : "5767484",
+            "techId" : "1936",
+            "preferred" : false,
+            "customerId": "23445",
+            "positionOnRoute": "5",
+            "shiftId": "78241",
+            "priority": 10,
+            "startTimeWindow": "201902111000",
+            "endTimeWindow": "201902111300",
+            "lockTimeWindow": true,
+            "taskIds": "23,45",
+            "serviceTypeId": 2,
+            "teamRequired": false,
+            "productId": "45218",
+            "skills": [{Id:1, level:1}, {Id:2, level:1}],
+            "openerName": "Mary Ann",
+            "descriptions": null,
+            "urgency": null,
+            "closed" : false
+           
+        }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "jobId": "522981",
+                    "callId" : "5767484",
+                    "techId" : "1936",
+                    "preferred" : false,
+                    "customerId": "23445",
+                    "positionOnRoute": "5",
+                    "shiftId": "78241",
+                    "priority": 10,
+                    "startTimeWindow": "201902111000",
+                    "endTimeWindow": "201902111300",
+                    "lockTimeWindow": true,
+                    "taskIds": "23,45",
+                    "serviceTypeId": 2,
+                    "teamRequired": false,
+                    "productId": "45218",
+                    "skills": "[{Id:1, level:1}, {Id:2, level:1}]",
+                    "openerName": "Mary Ann",
+                    "descriptions": null,
+                    "urgency": null,
+                    "closed": false
+                }
+            }            
+         
+### List [GET]
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": [{
+                        "jobId": "522981",
+                        "callId" : "5767484",
+                        "techId" : "1936",
+                        "preferred" : false,
+                        "customerId": "23445",
+                        "positionOnRoute": "5",
+                        "done": false,
+                        "shiftId": "78241",
+                        "priority": 10,
+                        "etaPrediction: "201902111010",
+                        "arrivalTime": "201902111010",
+                        "departureTime": "201902112020",
+                        "canceled": false,
+                        "startTimeWindow": "201902111000",
+                        "endTimeWindow": "201902111300",
+                        "lockTimeWindow": true,
+                        "taskIds": "23,45",
+                        "serviceTime": 80,
+                        "serviceTypeId": 2,
+                        "teamRequired": false,
+                        "productId": "45218",
+                        "skills": "[{Id:1, level:1}, {Id:2, level:1}]",
+                        "openerName": "Mary Ann",
+                        "descriptions": null,
+                        "force": true,
+                        "urgency": null,
+                        "anchor" :false,
+                        "closed" : false
+                }]
+            }            
+            
+## Job Edit, Get, Delete [/job/{id}/{date}/account/{account}]
+
+### Edit [PUT]
+
++ Parameters
+    + id (String, Required) - Job Id. Required if date is null 
+    + account (String, Required) - Token
++ Request (application/json)
+
+        {
+           "callId" : "5767484",
+            "techId" : "1936",
+            "preferred" : false,
+            "customerId": "23445",
+            "positionOnRoute": "5",
+            "shiftId": "78241",
+            "priority": 10,
+            "startTimeWindow": "201902111000",
+            "endTimeWindow": "201902111300",
+            "lockTimeWindow": true,
+            "taskIds": "23,45",
+            "serviceTypeId": 2,
+            "teamRequired": false,
+            "productId": "45218",
+            "skills": "[{Id:1, level:1}, {Id:2, level:1}]",
+            "openerName": "Mary Ann",
+            "descriptions": null,
+            "urgency": null,
+            "closed" : true
+        }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result":{
+                
+                        "callId" : "5767484",
+                        "techId" : "1936",
+                        "preferred" : false,
+                        "customerId": "23445",
+                        "positionOnRoute": "5",
+                        "shiftId": "78241",
+                        "priority": 10,
+                        "startTimeWindow": "201902111000",
+                        "endTimeWindow": "201902111300",
+                        "lockTimeWindow": true,
+                        "taskIds": "23,45",
+                        "serviceTypeId": 2,
+                        "teamRequired": false,
+                        "productId": "45218",
+                        "skills": "[{Id:1, level:1}, {Id:2, level:1}]",
+                        "openerName": "Mary Ann",
+                        "descriptions": null,
+                        "urgency": null,
+                        "closed" : true
+                        
+            }            
+       
+
+
+### Get [GET]
+
++ Parameters
+    + id (String, Required) - Job identifier
+    + date (String, Required) - Required if id is null. Date format yyyyMMdd
+    + account (String, Required) - Token
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                        "jobId": "522981",
+                        "callId" : "5767484",
+                        "techId" : "1936",
+                        "preferred" : false,
+                        "customerId": "23445",
+                        "positionOnRoute": "5",
+                        "done": false,
+                        "shiftId": "78241",
+                        "priority": 10,
+                        "etaPrediction: "201902111010",
+                        "arrivalTime": "201902111010",
+                        "departureTime": "201902112020",
+                        "canceled": false,
+                        "startTimeWindow": "201902111000",
+                        "endTimeWindow": "201902111300",
+                        "lockTimeWindow": true,
+                        "taskIds": "23,45",
+                        "serviceTime": 80,
+                        "serviceTypeId": 2,
+                        "teamRequired": false,
+                        "productId": "45218",
+                        "skills": "[{Id:1, level:1}, {Id:2, level:1}]",
+                        "openerName": "Mary Ann",
+                        "descriptions": null,
+                        "force": true,
+                        "urgency": null,
+                        "anchor":false,
+                        "closed" : true,
+                }
+            }            
+
+### Delete [DELETE]
+
++ Parameters
+    + id (string, required) - Job Id
+    + account (String, Required) - Token
+    
++ Response 200 (application/json)
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": id
+                
+            } 
+   
+## Job Done, [/jobdone/{id}/timestamp/{timestamp}/account/{account}]   
+
+<b>Report the service call as done</b>
+
+### Edit [PUT]
+
++ Parameters
+    + id (string, required) - Job Id
+    + timestamp (string) - Job done timestamp (yyyyMMddHHmm). defualt is now.
+    + account (String, Required) - Token
+    
++ Response 200 (application/json)
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": id
+                
+            } 
+            
+            
+          
+            
+## Product Create, List [/product/account/{account}]
+
+### Create [POST]
+
+* customerId (String) - customer Id
+* model (String) - Product model.
+* number (String) - Product number.
+* serial (String) - Product serial number.
+* purchaseDate (String) - Purchasing date.
+* warrantyExpireDate (String) - Warranty epiration date.
+* insuranceExpireDate (String) - Insurance expiration date.
+
+
++ Request (application/json)
+
+        {
+            
+            "model": "Nokia",
+            "number": "3379",
+            "serial": "525-N990-23178",
+            "purchaseDate": "2018/12/22",
+            "warrantyExpireDate": "2020/12/22",
+            "insuranceExpireDate": "2019/12/22"
+        }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "id": 424254345,
+                    "model": "Nokia",
+                    "number": "3379",
+                    "serial": "525-N990-23178",
+                    "purchaseDate": "2018/12/22",
+                    "warrantyExpireDate": "2020/12/22",
+                    "insuranceExpireDate": "2019/12/22"
+                }
+            }            
+         
+### List [GET]
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": [{
+                    "id": 424254345,
+                    "model": "Nokia",
+                    "number": "3379",
+                    "serial": "525-N990-23178",
+                    "purchaseDate": "2018/12/22",
+                    "warrantyExpireDate": "2020/12/22",
+                    "insuranceExpireDate": "2019/12/22"
+                }]
+            }            
+            
+## Product Edit, Get, Delete [/product/{id}/account/{account}]
+
+### Edit [PUT]
+
++ Parameters
+    + id (String, Required) - Product Id
+    + account (String, Required) - Token
+
++ Request (application/json)
+
+        {
+            "model": "Nokia",
+            "number": "3379",
+            "serial": "525-N990-23178",
+            "purchaseDate": "2018/12/22",
+            "warrantyExpireDate": "2020/12/22",
+            "insuranceExpireDate": "2019/12/22",
+        }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "id": 132535,
+                    "model": "Nokia",
+                    "number": "3379",
+                    "serial": "525-N990-23178",
+                    "purchaseDate": "2018/12/22",
+                    "warrantyExpireDate": "2020/12/22",
+                    "insuranceExpireDate": "2019/12/22"
+                }
+            }            
+       
+
+
+### Get [GET]
+
++ Parameters
+    + id (String, Required) - Product Id
+    + account (String, Required) - Token
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "id": "722981",
+                    "model": "Nokia",
+                    "number": "3379",
+                    "serial": "525-N990-23178",
+                    "purchaseDate": "2018/12/22",
+                    "warrantyExpireDate": "2020/12/22",
+                    "insuranceExpireDate": "2019/12/22"
+                }
+            }            
+
+### Delete [DELETE]
+
++ Parameters
+    + id (String, Required) - Product Id
+    + account (String, required) - Token
+    
++ Response 200 (application/json)
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": id
+                   
+            } 
+            
+## Skill Create, List [/skill/account/{account}]
+
+### Create [POST]
+
+* Id (String, Required) - Skill id.
+* name (String, Required) - Skill name.
+* level (Int, Required) - Skill level
+
+
+
++ Request (application/json)
+
+        {
+          
+            "Id": "1",
+            "name": "some skill",
+            "level": 1
+        }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "Id": 1,
+                    "name": "some skill",
+                    "level": 1
+                }
+            }            
+         
+### List [GET]
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": [{
+                    "id": 424254345,
+                    "name": "some skill",
+                    "level" : 1
+                   
+                }]
+            }            
+            
+
+## Skill Edit, Get, Delete [/skill/{id}/account/{account}]
+
+### Edit [PUT]
+
++ Parameters
+    + id (String, Required) - Skill Id
+    + account (String, Required) - Token
+
++ Request (application/json)
+
+        {
+            "id": "1",
+            "name": "some other skill",
+            "leve;" 1
+        }
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "Id": "1",
+                    "name": "some other skill",
+                    "level" : 1
+                }
+            } 
+            
+
+### Get [GET]
+
++ Parameters
+    + id (String, Required) - Skill Id
+    + account (String, Required) - Token
+
++ Response 200 (application/json)
+
+    + Body
+    
+             {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "id": "1",
+                    "name": "some skill",
+                    "level": 1
+                }
+            } 
+            
+
+
+### Delete [DELETE]
+
++ Parameters
+    + id (String, Required) - Skill Id
+    + account (String, Required) - Token
+    
++ Response 200 (application/json)
+
+    + Body
+    
+             {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "id": "1",
+                    "name": "some skill",
+                    "level": 1
+                }
+            } 
+            
+            
+## Territory Create, List [/territory/account/{account}]
+
+### Create [POST]
+
+* Id (String, Required) - Area Id.
+* name (String, Required) - Area name.
+
+
+
++ Request (application/json)
+
+        {
+           
+            "Id": "1",
+            "name": "some area",
+        }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "Id": 1,
+                    "name": "some area"
+                }
+            }            
+         
+### List [GET]
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": [{
+                    "Id": 424254345,
+                    "name": "some area",
+                   
+                }]
+            }            
+            
+
+## Territory Edit, Get, Delete [/territory/{id}/account/{account}]
+
+### Edit [PUT]
+
++ Parameters
+    + id (String, Required) - Area Id
+    + account (String, Required) - Token
+
++ Request (application/json)
+
+        {
+            "Id": "1",
+            "name": "some other area"
+        }
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "Id": "1",
+                    "name": "some other area"
+                }
+            } 
+            
+
+### Get [GET]
+
++ Parameters
+    + id (string, required) - Area Id
+    + account (String, Required) - Token
+
++ Response 200 (application/json)
+
+    + Body
+    
+             {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "Id": "1",
+                    "name": "some area"
+                }
+            } 
+            
+
+
+### Delete [DELETE]
+
++ Parameters
+    + id (string, required) - Area Id
+    + account (String, Required) - Token
+    
++ Response 200 (application/json)
+
+    + Body
+    
+             {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "Id": "1",
+                    "name": "some area"
+                }
+            } 
+            
+
+## Task Create, List [/task/account/{account}]
+
+### Create [POST]
+
+* id (String, Required) - Task Id.
+* name (String, Required) - Task name.
+* duration (Number, Required) = Task duration in minutes
+
+
++ Request (application/json)
+
+        {
+           
+            "Id": "1",
+            "name": "maintenance",
+            "duration": 40
+        }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "Id": 1,
+                    "name": "maintenance",
+                    "duration": 40
+                }
+            }            
+         
+### List [GET]
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": [{
+                    "Id": 1,
+                    "name": "maintenance",
+                    "duration": 40
+                }]
+            }            
+            
+## Task Edit, Get, Delete [/task/{id}/account/{account}]
+
+### Edit [PUT]
+
++ Parameters
+    + id (String, Required) - Task Id
+    + account (String, Required) - Token
+
++ Request (application/json)
+
+        {
+            "Id": "1",
+            "name": "maintenance",
+             "duration": 40
+        }
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "Id": "1",
+                    "name": "maintenance",
+                     "duration": 40
+                }
+            } 
+            
+### Get [GET]
+
++ Parameters
+    + id (string, required) - Task Id
+    + account (String, Required) - Token
+
++ Response 200 (application/json)
+
+    + Body
+    
+             {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "Id": "1",
+                    "name": "maintenance",
+                    "duration": 40
+                }
+            } 
+            
+### Delete [DELETE]
+
++ Parameters
+    + id (string, required) - Task Id
+    + account (String, Required) - Token
+    
++ Response 200 (application/json)
+
+    + Body
+    
+             {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "Id": "1",
+                    "name": "maintenance",
+                    "duration": 40
+                }
+            } 
+            
+            
+            
+            
+## ClosingCode Create, List [/closingcode/account/{account}]
+
+### Create [POST]
+
+* codeId (String, Required) - closing code Id.
+* description (String, Required) - code description.
+* account - token
+
+
+
++ Request (application/json)
+
+        {
+           
+            "codeId": "1",
+            "description": "maintenance",
+        }
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "codeId": 1,
+                    "description": "maintenance"
+                }
+            }            
+         
+### List [GET]
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": [{
+                    "codeId": 1,
+                    "description": "maintenance",
+                }]
+            }            
+            
+## ClosingCode Edit, Get, Delete [/closingcode/{id}/account/{account}]
+
+### Edit [PUT]
+
++ Parameters
+    + id - code Id to edit
+    + account (String, Required) - Token
+
++ Request (application/json)
+
+        {
+            "codeId": "1",
+            "name": "maintenance",
+           
+        }
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "codeId": "1",
+                    "description": "maintenance",
+                   
+                }
+            } 
+            
+### Get [GET]
+
++ Parameters
+    + id (string, required) - Closing code id to retrieve
+    + account (String, Required) - Token
+
++ Response 200 (application/json)
+
+    + Body
+    
+             {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "codeId": "1",
+                    "description": "maintenance",
+                }
+            } 
+            
+### Delete [DELETE]
+
++ Parameters
+    + id (string, required) - Closing code id to delete
+    + account (String, Required) - Token
+    
++ Response 200 (application/json)
+
+    + Body
+    
+             {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "codeId": "1",
+                    "description": "maintenance",
+                }
+            } 
+
+
+## Driver Tracking [/driver/{id}/location/{location}/status/{status}/account/{account}]
+
+### Edit [PUT]
+
++ Parameters
+    + id (string, required) - Driver Id
+    + location (string, required) - [latitude, longitude]
+    + status (string, required) - driving/arrival/departure
+    + account (string, required) - account name
+            
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+            } 
+            
+## Team Work [/jobAddAssignment/{jobId}/technician/{techId}/account/{account}]
+### JobAddAssignment [PUT]
+<b>Setting a team work by adding a techncian to an existing job </b>
+
+* jobId (String, Required) - Job identifier
+* techId (String, Required) - Technician identifier
+* account (String, Required) - Token
+
+
+        
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+            }          
+
+
+## Workforce Optimization [/globalopt/{id}/account/{account}]
+
+### GET [GET]
+
++ parametrs 
+    
+        + optId (String) - Global optimization Id
+        + account (String, Required) - Token
+        
++ Response 200 (application/json)
+
+    + Body
+    
+             {
+                "code": 1000,
+                "message": "OK",
+                "description": null,
+                "result": {
+                    "optId": "1456",
+                    "date": "202004260000",
+                    "hour": "1400",
+                    "daysBefore":1,
+                    "techTypeId": ["2","3"],
+                    "techTeamId: ["205","207"],
+                    "started": false,
+                    "ended": false,
+                    "startTimestamp": null,
+                    "endTimestamp": null
+                }
+            } 
+            
+## Route Optimization [/route/opt]
+
+### POST [POST]
+
++ payload header
+
+        Authorization: Bearer <token>
+
+
+
++ body
+
+   + requestId (string, required) - request identifier
+   + depotAddress (string, required) - departue address
+   + depotLatitude (double, required) - departure latitude
+   + depotLongitude (double, required) - departure longitude
+   + depotDatetime (string, required) - departue date and time in yyyyMMddHHmm format
+   + timezone (number, required) - timezone area
+   + endPoints (array, required) - an array of end points 
+   + geoId (string, required) - coordinates identifier
+   + latitude(double, required) - latitude point
+   + longitude (double, required) - longitude point
+   + address (string, required) - end point address
+   + startTimeWindow (string) - start time window if time window exists. in HHmm format
+   + endTimeWindow (string) - end time window if time window exists. in HHmm format
+   + eta (int, nullable) - will be sent as null
+        
++ Request (application/json)
+
+        {
+            "requestId": "156387",
+            "depotAddress": "Ben Yehuda 10 Tel Aviv",
+            "depotLatitude": 34.45353535,
+            "depotLongitude": 32.5535345345,
+            "depotDatetime": "202201160800",
+            "timezone": 120,
+            "endPoints":
+            [
+                {
+                    "geoId": "5432",
+                    "latitude": 34.3453455,
+                    "longitude": 32.234223423,
+                    "address": "Ben Yehuda 100 Tel Aviv",
+                    "startTimeWindow": "0800",
+                    "endTimeWindow": "1000",
+                    "eta": null,
+                    
+                }
+            ]
+        }
+        
++ Response 200 (application/json)
+
+    + Body
+    
+             {
+                "code": 1000,
+                "message": "OK",
+                "description": null
+            }
